@@ -243,7 +243,13 @@ app.get('/builds', authenticateToken, authorizeRole('admin', 'viewer'), (req, re
   });
 });
 app.get('/buildDetails', authenticatePrinter, (req, res)=> {
-  const printerDetails = req.body;
+  try{
+  const {printerDetails} = req.body;
+
+  }
+  catch(err){
+    console.log(`Body not present ${err}`);
+  }
   const printer_type =  printerDetails.split(' ')[0];
   const sub_type =  printerDetails.split(' ')[1];
   const make =  printerDetails.split(' ')[2];
