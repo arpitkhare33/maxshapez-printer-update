@@ -260,6 +260,7 @@ app.get('/buildDetails', authenticatePrinter, (req, res)=> {
   }
   catch(err){
     console.log("Error in getting builds: ", err);
+    return res.status(500).send(`Error in fetching builds`);
   }
 });
 
