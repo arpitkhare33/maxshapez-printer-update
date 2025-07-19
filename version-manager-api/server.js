@@ -250,9 +250,11 @@ app.get('/buildDetails', authenticatePrinter, (req, res)=> {
   catch(err){
     console.log(`Body not present ${err}`);
   }
-  const printer_type =  printerDetails.split(' ')[0];
+  try{
+    const printer_type =  printerDetails.split(' ')[0];
   const sub_type =  printerDetails.split(' ')[1];
   const make =  printerDetails.split(' ')[2];
+  console.log(`Printer Details requested: ${printer_type, sub_type, make}`)
   const stmt = `SELECT * FROM Builds ORDER BY upload_time DESC
                 WHERE printer_type = ? AND sub_type = ? AND make = ? AND version = ? 
   `;
@@ -260,6 +262,10 @@ app.get('/buildDetails', authenticatePrinter, (req, res)=> {
     if (err) return res.status(500).send('Failed to fetch builds.');
     res.json(rows);
   });
+  }
+  catch(err){
+    console.log("Error in getting builds: ", err);
+  }
 });
 
 app.delete('/builds/:id', authenticateToken, authorizeRole('admin'), (req, res) => {
