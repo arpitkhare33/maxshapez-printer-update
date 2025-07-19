@@ -245,7 +245,7 @@ app.get('/builds', authenticateToken, authorizeRole('admin', 'viewer'), (req, re
 app.get('/buildDetails', authenticatePrinter, (req, res)=> {
   try{
   console.log(`Printer Details: ${printerDetails}`);
-
+  const {printerDetails} = req.body;
   const printer_type =  printerDetails.split(' ')[0];
   const sub_type =  printerDetails.split(' ')[1];
   const make =  printerDetails.split(' ')[2];
