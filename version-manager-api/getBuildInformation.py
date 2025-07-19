@@ -9,7 +9,7 @@ try:
         data = json.load(f)
         server_url = data['ServerUrl']
         auth_token = data['AuthToken']
-        jwt_secret = data['JwtSecret']
+        header_name = data['HeaderName']
 except FileNotFoundError:
     print("Error: 'data.json' not found. Please ensure the file exists.")
 except json.JSONDecodeError:
@@ -17,14 +17,8 @@ except json.JSONDecodeError:
     
 
 # ============= Trying to get the builds ===================
-token = jwt.encode({"Token": auth_token}, jwt_secret)
-
-auth_headers = {
-    "authorization": f"Bearer {token}"
-}
-print(auth_headers)
-target_url = server_url + "/buildDetails"
-print(target_url)
-response = requests.get(target_url, headers=auth_headers)
-
-print(response)
+app_headers = {
+            header_name: auth_token
+        }
+response = requests.get(server_url+ "/buildDetails", headers=app_headers)
+print(response.content)

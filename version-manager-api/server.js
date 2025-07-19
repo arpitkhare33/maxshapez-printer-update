@@ -243,8 +243,14 @@ app.get('/builds', authenticateToken, authorizeRole('admin', 'viewer'), (req, re
   });
 });
 app.get('/buildDetails', authenticatePrinter, (req, res)=> {
-  const stmt = `SELECT * FROM Builds ORDER BY upload_time DESC`;
-  db.all(stmt, [], (err, rows) => {
+  const printerDetails = req.body;
+  const printer_type =  printerDetails.split(' ')[0];
+  const sub_type =  printerDetails.split(' ')[1];
+  const make =  printerDetails.split(' ')[2];
+  const stmt = `SELECT * FROM Builds ORDER BY upload_time DESC
+                WHERE printer_type = ? AND sub_type = ? AND make = ? AND version = ? 
+  `;
+  db.get(stmt, [printer_type, sub_type, make], (err, rows) => {
     if (err) return res.status(500).send('Failed to fetch builds.');
     res.json(rows);
   });

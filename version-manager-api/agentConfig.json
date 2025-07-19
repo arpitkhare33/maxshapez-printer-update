@@ -1,5 +1,6 @@
 {
     "ServerUrl": "http://maxshapez.ddns.net:3001",
     "AuthToken": "R3dE7yes",
-    "JwtSecret": "Maxshapez"
+    "HeaderName": "Maxshapez"
+
 }
