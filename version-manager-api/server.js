@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const app = express();
 const CONFIG = require('./config.json');
+const { exitCode } = require('process');
 
 const PORT = CONFIG.PORT;
 const JWT_SECRET = CONFIG.JWT_SECRET;
@@ -121,6 +122,21 @@ function authenticateToken(req, res, next) {
     next();
   });
 }
+// Function to authenticate the printer
+function authenticatePrinter(req, res, next){
+  try{
+  const authHeader = req.headers['maxshap-header'];
+  if (authHeader=="R3dE7yes"){
+    next();
+  }
+  else{
+    return res.status(403).send("Invalid token")
+  }
+}
+catch(err){
+  return res.status(401).send("Token not provided")
+}
+}
 function authorizeRole(...roles) {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
@@ -220,6 +236,13 @@ app.post('/download', (req, res) => {
 
 
 app.get('/builds', authenticateToken, authorizeRole('admin', 'viewer'), (req, res) => {
+  const stmt = `SELECT * FROM Builds ORDER BY upload_time DESC`;
+  db.all(stmt, [], (err, rows) => {
+    if (err) return res.status(500).send('Failed to fetch builds.');
+    res.json(rows);
+  });
+});
+app.get('/buildDetails', authenticatePrinter, (req, res)=> {
   const stmt = `SELECT * FROM Builds ORDER BY upload_time DESC`;
   db.all(stmt, [], (err, rows) => {
     if (err) return res.status(500).send('Failed to fetch builds.');
