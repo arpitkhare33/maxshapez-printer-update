@@ -245,7 +245,7 @@ app.get('/builds', authenticateToken, authorizeRole('admin', 'viewer'), (req, re
 app.get('/buildDetails', authenticatePrinter, (req, res)=> {
   try{
   const {printerDetails} = req.body;
-
+    console.log(`Printer Details: ${printerDetails}`);
   }
   catch(err){
     console.log(`Body not present ${err}`);
