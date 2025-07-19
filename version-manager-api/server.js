@@ -245,12 +245,16 @@ app.get('/builds', authenticateToken, authorizeRole('admin', 'viewer'), (req, re
 app.get('/buildDetails', authenticatePrinter, (req, res)=> {
   try{
   const {printerDetails} = req.body;
+
   const printer_type =  printerDetails.split(' ')[0];
   const sub_type =  printerDetails.split(' ')[1];
   const make =  printerDetails.split(' ')[2];
-  console.log(`Printer Details requested: ${printer_type, sub_type, make}`)
-  const stmt = `SELECT * FROM Builds ORDER BY upload_time DESC
-                WHERE printer_type = ? AND sub_type = ? AND make = ? AND version = ? 
+  console.log("Printer type: ", printer_type);
+  console.log("Printer Sub type: ", sub_type);
+  console.log("Printer Make: ", make);
+  const stmt = `SELECT * FROM Builds 
+                WHERE printer_type = ? AND sub_type = ? AND make = ?
+                ORDER BY upload_time DESC
   `;
   db.get(stmt, [printer_type, sub_type, make], (err, rows) => {
     if (err) return res.status(500).send('Failed to fetch builds.');
