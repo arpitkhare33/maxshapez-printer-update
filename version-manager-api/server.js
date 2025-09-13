@@ -242,7 +242,7 @@ app.get('/builds', authenticateToken, authorizeRole('admin', 'viewer'), (req, re
     res.json(rows);
   });
 });
-app.get('/buildDetails', authenticatePrinter, (req, res)=> {
+app.post('/buildDetails', authenticatePrinter, (req, res)=> {
   try{
   const {printerDetails} = req.body;
 
