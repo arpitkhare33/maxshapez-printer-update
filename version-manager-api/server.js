@@ -242,30 +242,34 @@ app.get('/builds', authenticateToken, authorizeRole('admin', 'viewer'), (req, re
     res.json(rows);
   });
 });
-app.post('/buildDetails', authenticatePrinter, (req, res)=> {
-  try{
-  const {printerDetails} = req.body;
+app.post('/buildDetails', authenticatePrinter, (req, res) => {
+  try {
+    const { printerDetails } = req.body;
 
-  const printer_type =  printerDetails.split(' ')[0];
-  const sub_type =  printerDetails.split(' ')[1];
-  const make =  printerDetails.split(' ')[2];
-  console.log("Printer type: ", printer_type);
-  console.log("Printer Sub type: ", sub_type);
-  console.log("Printer Make: ", make);
-  const stmt = `SELECT * FROM Builds 
-                WHERE printer_type = ? AND sub_type = ? AND make = ?
-                ORDER BY upload_time DESC
-  `;
-  db.get(stmt, [printer_type, sub_type, make], (err, rows) => {
-    if (err) return res.status(500).send('Failed to fetch builds.');
-    res.json(rows);
-  });
-  }
-  catch(err){
-    console.log("Error in getting builds: ", err);
-    return res.status(500).send(`Error in fetching builds`);
+    const printer_type = printerDetails.split(' ')[0];
+    const sub_type = printerDetails.split(' ')[1];
+    const make = printerDetails.split(' ')[2];
+
+    const stmt = `
+      SELECT * FROM Builds 
+      WHERE printer_type = ? AND sub_type = ? AND make = ?
+      ORDER BY upload_time DESC
+    `;
+
+    db.all(stmt, [printer_type, sub_type, make], (err, rows) => {
+      if (err) {
+        console.error("DB Error:", err);
+        return res.status(500).send('Failed to fetch builds.');
+      }
+      res.json(rows);  // ✅ return array of builds
+    });
+
+  } catch (error) {
+    console.error("Error in /buildDetails:", error);
+    res.status(500).send('Internal Server Error');
   }
 });
+
 
 app.delete('/builds/:id', authenticateToken, authorizeRole('admin'), (req, res) => {
   const buildId = req.params.id;
